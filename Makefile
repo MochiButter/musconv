@@ -6,6 +6,7 @@ BINDIR = bin
 EXECNAME = musconv 
 MAIN = $(BINDIR)/$(EXECNAME)
 SOURCES = $(wildcard $(SRCDIR)/*.cpp)
+HEADERS = $(wildcard $(SRCDIR)/*.h)
 OBJECTS = $(SOURCES:$(SRCDIR)/%.cpp=$(TMPDIR)/%.o)
 
 CC = clang++ 
@@ -20,7 +21,7 @@ $(MAIN): $(OBJECTS)
 	@mkdir -p $(@D)
 	$(CC) $(LIBS) $^ -o $@
 	
-$(TMPDIR)/%.o: $(SRCDIR)/%.cpp 
+$(TMPDIR)/%.o: $(SRCDIR)/%.cpp $(SRCDIR)/%.h
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $< -o $@
 

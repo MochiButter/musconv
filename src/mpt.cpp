@@ -7,10 +7,11 @@
 #include <libopenmpt/libopenmpt.hpp>
 
 #include "reader.h"
+#include "option.h"
 
 using namespace std;
 
-Mpt::Mpt(string path) : Reader(){
+Mpt::Mpt(string path, musconv_opts *opt) : Reader(opt){
   try{
     ifstream file(path, ios::binary);
     mod = new openmpt::module(file);
@@ -39,10 +40,6 @@ size_t Mpt::read_file(int16_t *buf, size_t read_count){
   size_t count = 0;
   count = mod->read_interleaved_stereo(Reader::samplerate, read_count, buf);
   return count;
-}
-
-void Mpt::play_forever(){
-  mod->set_repeat_count(-1);
 }
 
 ssize_t Mpt::get_comments(map<string,string> *comments) const{

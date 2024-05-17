@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <getopt.h>
+#include <string.h>
 
 #include <filesystem>
 #include <map>
@@ -11,6 +12,7 @@
 #include "writer.h"
 #include "selector.h"
 #include "musconv.h"
+#include "option.h"
 
 using namespace std;
 
@@ -48,11 +50,9 @@ int main(int argc, char **argv){
     exit(EXIT_FAILURE);
   }
 
+  musconv_opts opt;
+  init_opts(&opt);
   string out_template = "convert/%(artist) - %(title) [%(fn)].%(ext)";
-  int32_t samplerate = 48000;
-  // 20ms buffer
-  int32_t buffersize = (int32_t)samplerate * 0.02;
-  int32_t fade_seconds = 0;
 
   // Process options.
   // TODO: support mono, surround
@@ -74,6 +74,7 @@ int main(int argc, char **argv){
       {"repeat-count", required_argument, 0, 0},
       {"interpolation", required_argument, 0, 0},
       {"gain", required_argument, 0, 0},
+      {"fadeout", required_argument, 0, 0},
       {"print-subsongs", no_argument, 0, 0},
       {"print-metadata", no_argument, 0, 0},
       {"dry-run", no_argument, 0, 0},
@@ -83,14 +84,13 @@ int main(int argc, char **argv){
     if( c == -1)
       break;
 
-    (void)opname;
     switch (c){
       case 0:
         opname = long_options[option_index].name;
-        /*
         if(strcmp(opname,"samplerate") == 0){ // set sample rate 
           opt.samplerate = atoi(optarg);
         }
+        /*
         else if(strcmp(opname,"framesize") == 0){ // set frame size
           if(strcmp(optarg,"2.5") == 0) 
             opt.framesize = OPUS_FRAMESIZE_2_5_MS;
@@ -109,6 +109,7 @@ int main(int argc, char **argv){
             return 1;
           }
         }
+        */
         else if(strcmp(opname, "auto-comment") == 0){ // add comments from input file
           opt.auto_comment = true;
         }
@@ -129,9 +130,11 @@ int main(int argc, char **argv){
           }
           opt.repeat_count = rc;
         }
+        /*
         else if(strcmp(opname, "gain") == 0){ // set gain in mB
           opt.gain = atoi(optarg);
         }
+
         else if(strcmp(opname, "interpolation") == 0){ // set interpolation filter preset
           int32_t ifl = atoi(optarg);
           if(ifl < 0){
@@ -139,6 +142,15 @@ int main(int argc, char **argv){
             return 1;
           }
           opt.interpolation = ifl;
+        }
+        */
+        else if(strcmp(opname, "fadeout") == 0){ // plays n + 1 times
+          int32_t fade = atoi(optarg);
+          if(fade < 0){
+            printf("--fadeout must be 0 or above\n");
+            return 1;
+          }
+          opt.fade_seconds = fade;
         }
         else if(strcmp(opname, "print-subsongs") == 0){ // print list of subsongs and numbers
           opt.print_sub = true;
@@ -149,6 +161,7 @@ int main(int argc, char **argv){
         else if(strcmp(opname, "dry-run") == 0){ // skips encoding to file
           opt.dry_run = true;
         }
+        /*
         else if(strcmp(opname, "supported") == 0){ // print list of supported files
           supported();
           return 0;
@@ -169,7 +182,7 @@ int main(int argc, char **argv){
         //opt.quiet = true;
         break;
       case 'o': // set output file location
-        out_template = optarg;
+        opt.out_template = optarg;
         break;
       case '?': // option not recognized
         usage(argv[0]);
@@ -177,6 +190,20 @@ int main(int argc, char **argv){
         break;
     }
   }
+  print_opts(&opt);
+
+  //out_template = opt.out_template;
+  /*
+  int32_t samplerate = opt.samplerate;
+  // 20ms buffer
+  int32_t buffersize = opt.buffersize;//(int32_t)samplerate * 0.02;
+  int32_t fade_seconds = opt.fade_seconds;
+  */
+  int32_t samplerate = opt.samplerate;
+  // 20ms buffer
+  int32_t buffersize = opt.bufsize;
+  int32_t fade_seconds = opt.fade_seconds;
+
 
   /*
    * Main loop for conversion
@@ -197,13 +224,15 @@ int main(int argc, char **argv){
     string out;
 
     // TODO: error catch and throwing 
-    r = select_reader(path, fext);
+    r = select_reader(path, fext, &opt);
     if(r == nullptr){
       goto clean;
     }
 
     // Get comments from reader
-    r->get_comments(&comments);
+    if(opt.auto_comment){
+      r->get_comments(&comments);
+    }
 
     out = get_output_path(out_template, fstem, WRITER_OPUS, comments);
     outpath = filesystem::path(out);
@@ -221,7 +250,7 @@ int main(int argc, char **argv){
       goto clean;
     }
 
-    (void)fade_seconds;
+
     if(r != nullptr && w != nullptr){
       cout << "Writing to " << out << endl;
       vector<int16_t> buffer(buffersize * 2);

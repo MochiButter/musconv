@@ -8,17 +8,18 @@
 #include "mpt.h"
 #include "ope.h"
 #include "musconv.h"
+#include "option.h"
 
 using namespace std;
 
 /* Decoder type selector.
  * Selects which Reader subclass to use to decode given file, or none if unsupported. 
  */
-Reader *select_reader(string path, string ext){
+Reader *select_reader(string path, string ext, musconv_opts *opt){
   Reader *ret = nullptr;
   if(Mpt::is_supported(ext)){
     try{
-      ret = new Mpt(path);
+      ret = new Mpt(path, opt);
     }
     catch(exception &e){
       ret = nullptr;
