@@ -97,10 +97,10 @@ int main(int argc, char **argv){
               exit(EXIT_FAILURE);
           }
         }
-        /*
         else if(strcmp(opname, "auto-comment") == 0){ // add comments from input file
           opt.auto_comment = true;
         }
+        /*
         else if(strcmp(opname, "artist") == 0){ // set artist tag
           opt.artist = optarg;
         }
