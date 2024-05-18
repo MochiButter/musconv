@@ -53,11 +53,10 @@ bool music_convert(char *path, musconv_opts *opt){
   if(out_template == NULL){
     out_template = "convert/%(fn).%(ext)";
   }
-  printf("%s\n",out_template);
   int32_t samplerate = opt->samplerate;
   int32_t buffersize = opt->bufsize;
   int32_t fade_seconds = opt->fade_seconds;
-  vector<int16_t> buffer(buffersize * 2);
+  vector<int16_t> buffer(buffersize * opt->channels);
 
   filesystem::path p(path);
   string fdir = p.parent_path().string();
@@ -85,7 +84,6 @@ bool music_convert(char *path, musconv_opts *opt){
   // TODO overwrite [y/N] prompt
   out = get_output_path(out_template, fstem, WRITER_OPUS, comments);
   outpath = filesystem::path(out);
-  printf("%s\n", outpath.string().data());
   // check if path is writeable, skip if not
   if((filesystem::perms::owner_write & filesystem::status(outpath).permissions()) 
     != filesystem::perms::owner_write){
@@ -119,18 +117,20 @@ bool music_convert(char *path, musconv_opts *opt){
     int32_t samples_left = fade_samples;
     size_t wrsize = buffersize;
     float volume = 0;
-    size_t bufpos = 0;
+    size_t i, j;
+    int32_t channels = opt->channels;
     while(samples_left >= buffersize){
       r->read_file(buffer.data(), buffersize);
       samples_left -= buffersize;
       if(samples_left < buffersize){
         wrsize = samples_left;
       }
-      for(size_t i = 0; i < wrsize; i++){
+      for(i = 0; i < wrsize; i++){
         volume = (samples_left + buffersize - i) / (float)fade_samples;
-        bufpos = 2 * i;
-        buffer[bufpos] = (int16_t)(buffer[bufpos] * volume);
-        buffer[bufpos + 1] = (int16_t)(buffer[bufpos] * volume);
+        // scale volume for each interleaved frame
+        for(j = 0; j < (size_t)channels; j++){
+          buffer[channels * i + j] = (int16_t)(buffer[channels * i] * volume);
+        }
       }
       w->write_file(buffer.data(), wrsize);
     }

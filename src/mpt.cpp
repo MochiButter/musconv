@@ -1,6 +1,7 @@
 #include "mpt.h"
 
-#include <iostream>
+#include <stdio.h>
+
 #include <fstream>
 #include <string>
 
@@ -18,7 +19,7 @@ Mpt::Mpt(string path, musconv_opts *opt) : Reader(opt){
     file.close();
   } 
   catch(const exception &e){
-    cerr << "Error in Mpt(): " << e.what() << endl;
+    fprintf(stderr, "Error in Mpt(): %s\n", e.what());
     throw e;
   }
   mod->set_repeat_count(Reader::repeat_count);
@@ -32,13 +33,27 @@ Mpt::~Mpt() {
     delete(mod);
 }
 
+// read_count is the frames to render per channel
 size_t Mpt::read_file(int16_t *buf, size_t read_count){
   if(read_count > Reader::bufsize){
-    cerr << "Error in Mpt(): bad read count given" << endl;
+    fprintf(stderr, "Error in Mpt(): bad read count given\n");
     return 0;
   }
   size_t count = 0;
-  count = mod->read_interleaved_stereo(Reader::samplerate, read_count, buf);
+  switch(Reader::channels){
+    case 1:
+      count = mod->read(Reader::samplerate, read_count, buf);
+      break;
+    case 2:
+      count = mod->read_interleaved_stereo(Reader::samplerate, read_count, buf);
+      break;
+    case 4:
+      count = mod->read_interleaved_quad(Reader::samplerate, read_count, buf);
+      break;
+    default:
+      //error
+      count = 0;
+  }
   return count;
 }
 

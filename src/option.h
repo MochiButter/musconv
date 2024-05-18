@@ -7,7 +7,7 @@
 typedef struct{
   /* for both reader and writer */
   int32_t samplerate;
-  //int channels;
+  int32_t channels;
 
   /* for the reader */
   size_t bufsize;

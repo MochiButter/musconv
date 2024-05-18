@@ -58,6 +58,7 @@ int main(int argc, char **argv){
     {"output", required_argument, 0, 'o'},
     {"supported", no_argument, 0, 0},
     {"samplerate", required_argument, 0, 0},
+    {"channels", required_argument, 0, 0},
     {"framesize", required_argument, 0, 0},
     {"auto-comment", no_argument, 0, 0},
     {"comment", required_argument, 0, 0},
@@ -81,27 +82,22 @@ int main(int argc, char **argv){
         opname = long_options[option_index].name;
         if(strcmp(opname,"samplerate") == 0){ // set sample rate 
           opt.samplerate = atoi(optarg);
+          opt.bufsize = opt.samplerate * 0.02;
         }
-        /*
-        else if(strcmp(opname,"framesize") == 0){ // set frame size
-          if(strcmp(optarg,"2.5") == 0) 
-            opt.framesize = OPUS_FRAMESIZE_2_5_MS;
-          else if(strcmp(optarg,"5") == 0) 
-            opt.framesize = OPUS_FRAMESIZE_5_MS;
-          else if(strcmp(optarg,"10") == 0) 
-            opt.framesize = OPUS_FRAMESIZE_10_MS;
-          else if(strcmp(optarg,"20") == 0)
-            opt.framesize = OPUS_FRAMESIZE_20_MS;
-          else if(strcmp(optarg,"40") == 0)
-            opt.framesize = OPUS_FRAMESIZE_40_MS;
-          else if(strcmp(optarg,"60") == 0)
-            opt.framesize = OPUS_FRAMESIZE_60_MS;
-          else{
-            printf("--framesize must be one of the following: [2.5, 5, 10, 20, 40, 60].\n");
-            return 1;
+        if(strcmp(opname,"channels") == 0){ // set channels
+          int32_t ch = atoi(optarg);
+          switch(ch){
+            case 1:
+            case 2:
+            case 4:
+              opt.channels = ch;
+              break;
+            default:
+              printf("Channel count must be 1, 2, or 4.\n");
+              exit(EXIT_FAILURE);
           }
         }
-        */
+        /*
         else if(strcmp(opname, "auto-comment") == 0){ // add comments from input file
           opt.auto_comment = true;
         }
@@ -114,6 +110,7 @@ int main(int argc, char **argv){
         else if(strcmp(opname, "date") == 0){ // set date tag
           opt.date = optarg;
         }
+        */
         else if(strcmp(opname, "repeat-count") == 0){ // plays n + 1 times
           int32_t rc = atoi(optarg);
           if(rc < 0){
@@ -180,8 +177,13 @@ int main(int argc, char **argv){
         break;
     }
   }
+
+   if(optind >= argc){
+    usage(argv[0]);
+    exit(EXIT_FAILURE);
+  } 
   
-  if(!opt.quiet){
+   if(!opt.quiet){
     print_opts(&opt);
   }
 

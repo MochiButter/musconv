@@ -15,13 +15,12 @@ class Opus : public Writer{
   private: 
     OggOpusEnc *enc;
     OggOpusComments *comm;
-    int32_t channels = 2;
 
   public:
     Opus(string, const map<string, string> &, musconv_opts *);
     virtual ~Opus();
 
-    virtual size_t write_file(const int16_t *, const size_t) override;
+    virtual size_t write_file(const int16_t *, size_t) override;
  
     virtual ssize_t add_comments(const map<string, string> &) override;
 };

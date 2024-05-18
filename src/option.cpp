@@ -4,6 +4,7 @@
 
 void init_opts(musconv_opts *opt){
   opt->samplerate = 48000;
+  opt->channels = 2;
   // buffersize based on opus guidelines (20ms for 48kHz)
   // TODO find a good value for any output
   opt->bufsize = 960;
