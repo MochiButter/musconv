@@ -28,7 +28,7 @@ Mpt::Mpt(string path, musconv_opts *opt) : Reader(opt){
 }
 
 Mpt::~Mpt() {
-  if(mod != nullptr)
+  if(mod != NULL)
     delete(mod);
 }
 

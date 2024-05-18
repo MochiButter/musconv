@@ -3,14 +3,6 @@
 #include <getopt.h>
 #include <string.h>
 
-#include <filesystem>
-#include <map>
-#include <vector>
-#include <iostream>
-
-#include "reader.h"
-#include "writer.h"
-#include "selector.h"
 #include "musconv.h"
 #include "option.h"
 
@@ -42,6 +34,7 @@ void usage(const char* name){
   printf("  --samplerate n     Set samplerate to n.\n");
   printf("  --repeat-count n   Repeat the song n times after playing once.\n");
   printf("  --dry-run          Run the program, skipping writing to file.\n");
+  printf("  --fade-seconds n   After the song finishes playing, play for another n seconds and fade out.\n");
 }
 
 int main(int argc, char **argv){
@@ -52,34 +45,33 @@ int main(int argc, char **argv){
 
   musconv_opts opt;
   init_opts(&opt);
-  string out_template = "convert/%(artist) - %(title) [%(fn)].%(ext)";
 
   // Process options.
   // TODO: support mono, surround
   int c = 0;
+  int option_index = 0;
+  const char* opname;
+  static struct option long_options[] = {
+    {"help", no_argument, 0, 'h'},
+    {"version", no_argument, 0, 'V'},
+    {"quiet", no_argument, 0, 'q'},
+    {"output", required_argument, 0, 'o'},
+    {"supported", no_argument, 0, 0},
+    {"samplerate", required_argument, 0, 0},
+    {"framesize", required_argument, 0, 0},
+    {"auto-comment", no_argument, 0, 0},
+    {"comment", required_argument, 0, 0},
+    {"repeat-count", required_argument, 0, 0},
+    {"interpolation", required_argument, 0, 0},
+    {"gain", required_argument, 0, 0},
+    {"fadeout", required_argument, 0, 0},
+    {"print-subsongs", no_argument, 0, 0},
+    {"print-metadata", no_argument, 0, 0},
+    {"dry-run", no_argument, 0, 0},
+    {0, 0, 0, 0}
+  };
+
   while(1){
-    int option_index = 0;
-    const char* opname;
-    static struct option long_options[] = {
-      {"help", no_argument, 0, 'h'},
-      {"version", no_argument, 0, 'V'},
-      {"verbose", no_argument, 0, 'v'},
-      {"quiet", no_argument, 0, 'q'},
-      {"output", required_argument, 0, 'o'},
-      {"supported", no_argument, 0, 0},
-      {"samplerate", required_argument, 0, 0},
-      {"framesize", required_argument, 0, 0},
-      {"auto-comment", no_argument, 0, 0},
-      {"comment", required_argument, 0, 0},
-      {"repeat-count", required_argument, 0, 0},
-      {"interpolation", required_argument, 0, 0},
-      {"gain", required_argument, 0, 0},
-      {"fadeout", required_argument, 0, 0},
-      {"print-subsongs", no_argument, 0, 0},
-      {"print-metadata", no_argument, 0, 0},
-      {"dry-run", no_argument, 0, 0},
-      {0, 0, 0, 0}
-    };
     c = getopt_long(argc, argv, "hvVqo:", long_options, &option_index);
     if( c == -1)
       break;
@@ -176,10 +168,8 @@ int main(int argc, char **argv){
         printf("%s %f\n",argv[0], VERSION);
         exit(EXIT_SUCCESS);
         break;
-      case 'v'://verbose
-        break;
       case 'q': // don't print
-        //opt.quiet = true;
+        opt.quiet = true;
         break;
       case 'o': // set output file location
         opt.out_template = optarg;
@@ -190,104 +180,20 @@ int main(int argc, char **argv){
         break;
     }
   }
-  print_opts(&opt);
+  
+  if(!opt.quiet){
+    print_opts(&opt);
+  }
 
-  //out_template = opt.out_template;
-  /*
-  int32_t samplerate = opt.samplerate;
-  // 20ms buffer
-  int32_t buffersize = opt.buffersize;//(int32_t)samplerate * 0.02;
-  int32_t fade_seconds = opt.fade_seconds;
-  */
-  int32_t samplerate = opt.samplerate;
-  // 20ms buffer
-  int32_t buffersize = opt.bufsize;
-  int32_t fade_seconds = opt.fade_seconds;
-
-
-  /*
-   * Main loop for conversion
-   * For each file given, loads the correct reader and writer to convert
-   * files. Loads options and creates objects to follow the user's input.
-   */
   while(optind < argc){
     char *path = argv[optind++];
-    filesystem::path p(path);
-    string fdir = p.parent_path().string();
-    string fstem = p.stem().string();
-    string fext = p.extension().string().erase(0,1);
-
-    Reader *r = nullptr;
-    Writer *w = nullptr;
-    map<string, string> comments;
-    filesystem::path outpath;
-    string out;
-
-    // TODO: error catch and throwing 
-    r = select_reader(path, fext, &opt);
-    if(r == nullptr){
-      goto clean;
+    bool success = music_convert(path, &opt);
+    if(!success){
+      printf("Failed converting %s\n", path);
     }
-
-    // Get comments from reader
-    if(opt.auto_comment){
-      r->get_comments(&comments);
+    else {
+      printf("Success\n");
     }
-
-    out = get_output_path(out_template, fstem, WRITER_OPUS, comments);
-    outpath = filesystem::path(out);
-    // check if path is writeable, skip if not
-    if((filesystem::perms::owner_write & filesystem::status(outpath).permissions()) 
-        != filesystem::perms::owner_write){
-      cerr << "Not able to write to " << out << endl;
-      goto clean;
-    }
-    // creates any directory in path that does not exixt
-    filesystem::create_directories(outpath.parent_path());
-    
-    w = select_writer(out, WRITER_OPUS, comments);
-    if(w == nullptr){
-      goto clean;
-    }
-
-
-    if(r != nullptr && w != nullptr){
-      cout << "Writing to " << out << endl;
-      vector<int16_t> buffer(buffersize * 2);
-      while(1){
-        size_t c = 0;
-        c = r->read_file(buffer.data(), buffersize);
-        w->write_file(buffer.data(),c);
-        if((int)c < buffersize){
-          cout << "Success" << endl;
-          break;
-        }
-      }
-      if(fade_seconds){
-        int32_t fade_samples = fade_seconds * samplerate;
-        int32_t samples_left = fade_samples;
-        size_t wrsize = buffersize;
-        while(samples_left >= buffersize){
-          // TODO does read_file need the buffersize input?
-          r->read_file(buffer.data(), buffersize);
-          samples_left -= buffersize;
-          if(samples_left < buffersize){
-            wrsize = samples_left;
-          }
-          for(size_t i = 0; i < wrsize; i++){
-            float volume = (samples_left + buffersize - i) / (float)fade_samples;
-            size_t bufpos = 2 * i;
-            buffer[bufpos] = (int16_t)(buffer[bufpos] * volume);
-            buffer[bufpos + 1] = (int16_t)(buffer[bufpos] * volume);
-          }
-          w->write_file(buffer.data(), wrsize);
-        }
-        cout << "fade success" << endl;
-      }
-    }
-clean:
-    if(r) {delete(r);}
-    if(w) {delete(w);}
   }
   exit(EXIT_SUCCESS);
 }

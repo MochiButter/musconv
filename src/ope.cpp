@@ -8,10 +8,12 @@
 #include <opusenc.h>
 
 #include "writer.h"
+#include "option.h"
 
 using namespace std;
 
-Opus::Opus(string path, const map<string, string> &comments){
+Opus::Opus(string path, const map<string, string> &comments, musconv_opts *opt) : Writer(opt){
+  (void)opt;
   int error = OPE_OK;
   comm = ope_comments_create();
   if(error != OPE_OK){

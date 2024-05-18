@@ -7,6 +7,7 @@
 #include <opusenc.h>
 
 #include "writer.h"
+#include "option.h"
 
 using namespace std;
 
@@ -17,7 +18,7 @@ class Opus : public Writer{
     int32_t channels = 2;
 
   public:
-    Opus(string, const map<string, string> &);
+    Opus(string, const map<string, string> &, musconv_opts *);
     virtual ~Opus();
 
     virtual size_t write_file(const int16_t *, const size_t) override;

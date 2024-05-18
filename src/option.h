@@ -7,10 +7,10 @@
 typedef struct{
   /* for both reader and writer */
   int32_t samplerate;
-  size_t bufsize;
   //int channels;
 
   /* for the reader */
+  size_t bufsize;
   int32_t repeat_count;
   //int32_t interpolation;
   //int32_t gain;
@@ -27,7 +27,6 @@ typedef struct{
   bool print_meta;
   bool dry_run;
   bool quiet;
-  bool verbose;
 } musconv_opts;
 
 void init_opts(musconv_opts *);

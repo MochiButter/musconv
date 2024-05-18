@@ -13,7 +13,7 @@ using namespace std;
 
 class Mpt : public Reader{
   private:
-    openmpt::module *mod = nullptr;
+    openmpt::module *mod = NULL;
   public:
     Mpt(string, musconv_opts *);
     virtual ~Mpt();

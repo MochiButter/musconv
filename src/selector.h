@@ -15,5 +15,5 @@ enum WRITESEL{
 };
 
 Reader *select_reader(string, string, musconv_opts *);
-Writer *select_writer(string, WRITESEL, const map<string, string> &);
+Writer *select_writer(string, WRITESEL, const map<string, string> &, musconv_opts *);
 #endif
