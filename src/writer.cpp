@@ -1,16 +1,13 @@
 #include "writer.h"
 
-#include <iostream>
+#include "option.h"
 
 using namespace std;
 
-Writer::Writer(){
+Writer::Writer(musconv_opts *opt){
+  samplerate = opt->samplerate;
+  channels = opt->channels;
 }
 
 Writer::~Writer() {
 }
-
-void Writer::set_samplerate(const int32_t _samplerate){
-  samplerate = _samplerate;
-}
-
