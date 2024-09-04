@@ -8,7 +8,7 @@
 
 using namespace std;
 
-#define VERSION 0.2
+#define VERSION 0.3
 
 /* Prints information on how to use options.
  * param name the name of the executable
@@ -33,8 +33,11 @@ void usage(const char* name){
   printf("\nRendering options:\n");
   printf("  --samplerate n     Set samplerate to n.\n");
   printf("  --repeat-count n   Repeat the song n times after playing once.\n");
-  printf("  --dry-run          Run the program, skipping writing to file.\n");
-  printf("  --fade-seconds n   After the song finishes playing, play for another n seconds and fade out.\n");
+  printf("  --channels n       Sets the channel to n, options 1, 2, or 4.\n");
+  //printf("  --dry-run          Run the program, skipping writing to file.\n");
+  printf("  --fadeout n   After the song finishes playing, play for another n seconds and fade out.\n");
+  printf("\nComment options:\n");
+  printf("  --auto-comment     Automatically fills the tags of the output file from the source file.\n");
 }
 
 int main(int argc, char **argv){
