@@ -26,6 +26,9 @@ Mpt::Mpt(string path, musconv_opts *opt) : Reader(opt){
   if(Reader::fade_seconds){
     mod->ctl_set_text("play.at_end", "continue");
   }
+  if(Reader::play_seconds){
+    mod->set_repeat_count(-1);
+  }
 }
 
 Mpt::~Mpt() {

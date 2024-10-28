@@ -12,6 +12,7 @@ void init_opts(musconv_opts *opt){
   //opt->interpolation = ;
   //opt->gain =;
   opt->fade_seconds = 0;
+  opt->play_seconds = 0;
   //opt->channels = 2;
   opt->filename = NULL;
   opt->artist = NULL;

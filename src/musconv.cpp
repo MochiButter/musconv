@@ -58,6 +58,15 @@ bool music_convert(char *path, musconv_opts *opt){
   int32_t fade_seconds = opt->fade_seconds;
   vector<int16_t> buffer(buffersize * opt->channels);
 
+  size_t time_count = 0;
+  size_t time_max = 0;
+  if(opt->play_seconds){
+    // play for n samples, which is the seconds specified, minus the fadeout time.
+    time_max = opt->samplerate * (opt->play_seconds - opt->fade_seconds);
+  }
+  printf("Playing for %d seconds => %lu samples\n", opt->play_seconds, time_max);
+
+
   filesystem::path p(path);
   string fdir = p.parent_path().string();
   string fstem = p.stem().string();
@@ -101,12 +110,18 @@ bool music_convert(char *path, musconv_opts *opt){
     success = false;
     goto clean;
   }
-
-
+  
   printf("Writing to %s\n", out.data());
   while(1){
     size_t c = 0;
     c = r->read_file(buffer.data(), buffersize);
+    time_count += c;
+    if(time_max > 1 && time_count > time_max){
+      size_t write_diff;
+      write_diff = time_count - time_max;
+      w->write_file(buffer.data(),write_diff);
+      break;
+    }
     w->write_file(buffer.data(),c);
     if((int)c < buffersize){
       break;

@@ -14,6 +14,7 @@ class Reader{
     size_t bufsize = 960;
     int32_t repeat_count = 0;
     int32_t fade_seconds = 0;
+    int32_t play_seconds = 0;
     int32_t channels = 2;
 
   public:

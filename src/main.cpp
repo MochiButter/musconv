@@ -35,7 +35,8 @@ void usage(const char* name){
   printf("  --repeat-count n   Repeat the song n times after playing once.\n");
   printf("  --channels n       Sets the channel to n, options 1, 2, or 4.\n");
   //printf("  --dry-run          Run the program, skipping writing to file.\n");
-  printf("  --fadeout n   After the song finishes playing, play for another n seconds and fade out.\n");
+  printf("  --time n           Specifies the time in seconds the song should play for. INCLUDES the fadeout time.\n");
+  printf("  --fadeout n        After the song finishes playing, play for another n seconds and fade out.\n");
   printf("\nComment options:\n");
   printf("  --auto-comment     Automatically fills the tags of the output file from the source file.\n");
 }
@@ -69,6 +70,7 @@ int main(int argc, char **argv){
     {"interpolation", required_argument, 0, 0},
     {"gain", required_argument, 0, 0},
     {"fadeout", required_argument, 0, 0},
+    {"time", required_argument, 0, 0},
     {"print-subsongs", no_argument, 0, 0},
     {"print-metadata", no_argument, 0, 0},
     {"dry-run", no_argument, 0, 0},
@@ -136,13 +138,21 @@ int main(int argc, char **argv){
           opt.interpolation = ifl;
         }
         */
-        else if(strcmp(opname, "fadeout") == 0){ // plays n + 1 times
+        else if(strcmp(opname, "fadeout") == 0){ // fades out for n seconds
           int32_t fade = atoi(optarg);
           if(fade < 0){
             printf("--fadeout must be 0 or above\n");
             return 1;
           }
           opt.fade_seconds = fade;
+        }
+        else if(strcmp(opname, "time") == 0){ // plays for n seconds, fadeout inclusive
+          int32_t time = atoi(optarg);
+          if(time < 1){
+            printf("--time must be above 0 seconds\n");
+            return 1;
+          }
+          opt.play_seconds = time;
         }
         else if(strcmp(opname, "print-subsongs") == 0){ // print list of subsongs and numbers
           opt.print_sub = true;
@@ -181,12 +191,17 @@ int main(int argc, char **argv){
     }
   }
 
-   if(optind >= argc){
+  if(optind >= argc){
     usage(argv[0]);
     exit(EXIT_FAILURE);
-  } 
-  
-   if(!opt.quiet){
+  }
+
+  if((opt.play_seconds) && opt.fade_seconds >= opt.play_seconds){
+    printf("Fadeout time must be at least 1 seconds less than playback time\n");
+    exit(EXIT_FAILURE);
+  }
+
+  if(!opt.quiet){
     print_opts(&opt);
   }
 

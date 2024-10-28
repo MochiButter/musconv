@@ -11,7 +11,7 @@ OBJECTS = $(SOURCES:$(SRCDIR)/%.cpp=$(TMPDIR)/%.o)
 
 #CC = clang++ 
 CC = g++ 
-CFLAGS = -std=c++17 -Wall -Werror -Wextra -pedantic -g -I /usr/include/opus -I include
+CFLAGS = -std=c++17 -Wall -Werror -Wextra -pedantic -g -I /usr/include/opus -I $(INCDIR) 
 LIBS = $(shell pkg-config --libs libopenmpt libopusenc)
 
 .PHONY: all clean 

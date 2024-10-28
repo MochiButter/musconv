@@ -17,6 +17,7 @@ typedef struct{
   
   /* for main */
   int32_t fade_seconds;
+  int32_t play_seconds;
   char *filename; 
   char *artist;
   char *title;
