@@ -1,4 +1,5 @@
 build/
 convert/
 TODO.md
-./musconv
+musconv
+*.xm
