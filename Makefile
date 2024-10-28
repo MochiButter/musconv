@@ -1,17 +1,17 @@
 SHELL = /bin/sh
 SRCDIR = src
+INCDIR = include
 TMPDIR = build
-BINDIR = bin
 
 EXECNAME = musconv 
-MAIN = $(BINDIR)/$(EXECNAME)
+MAIN = $(EXECNAME)
 SOURCES = $(wildcard $(SRCDIR)/*.cpp)
 HEADERS = $(wildcard $(SRCDIR)/*.h)
 OBJECTS = $(SOURCES:$(SRCDIR)/%.cpp=$(TMPDIR)/%.o)
 
 #CC = clang++ 
 CC = g++ 
-CFLAGS = -std=c++17 -Wall -Werror -Wextra -pedantic -g -I /usr/include/opus
+CFLAGS = -std=c++17 -Wall -Werror -Wextra -pedantic -g -I /usr/include/opus -I include
 LIBS = $(shell pkg-config --libs libopenmpt libopusenc)
 
 .PHONY: all clean 
@@ -22,9 +22,9 @@ $(MAIN): $(OBJECTS)
 	@mkdir -p $(@D)
 	$(CC) $^ $(LIBS) -o $@
 	
-$(TMPDIR)/%.o: $(SRCDIR)/%.cpp $(SRCDIR)/%.h
+$(TMPDIR)/%.o: $(SRCDIR)/%.cpp $(INCDIR)/%.h
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -rf ./$(BINDIR) ./$(TMPDIR) 
+	rm -rf ./$(MAIN) ./$(TMPDIR) 
