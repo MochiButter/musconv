@@ -4,15 +4,13 @@ INCDIR = include
 TMPDIR = build
 
 EXECNAME = musconv 
-MAIN = $(EXECNAME)
+MAIN = $(TMPDIR)/$(EXECNAME)
 SOURCES = $(wildcard $(SRCDIR)/*.cpp)
-HEADERS = $(wildcard $(SRCDIR)/*.h)
 OBJECTS = $(SOURCES:$(SRCDIR)/%.cpp=$(TMPDIR)/%.o)
 
-#CC = clang++ 
 CC = g++ 
 CFLAGS = -std=c++17 -Wall -Werror -Wextra -pedantic -g -I /usr/include/opus -I $(INCDIR) 
-LIBS = $(shell pkg-config --libs libopenmpt libopusenc)
+LIBS = $(shell pkg-config --libs libopenmpt libopusenc flac)
 
 .PHONY: all clean 
 
@@ -27,4 +25,4 @@ $(TMPDIR)/%.o: $(SRCDIR)/%.cpp $(INCDIR)/%.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -rf ./$(MAIN) ./$(TMPDIR) 
+	rm -rf ./$(TMPDIR) 

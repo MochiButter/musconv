@@ -11,6 +11,7 @@ void init_opts(musconv_opts *opt){
   opt->repeat_count = 0;
   //opt->interpolation = ;
   //opt->gain =;
+  opt->encoder = WRITER_OPUS;
   opt->fade_seconds = 0;
   opt->play_seconds = 0;
   //opt->channels = 2;
@@ -28,7 +29,7 @@ void init_opts(musconv_opts *opt){
 
 void print_opts(musconv_opts *opt){
   printf("Samplerate: %dHz\n", opt->samplerate);
-  printf("Buffer size: %lu => %.2f ms\n", opt->bufsize, ((float)opt->bufsize / opt->samplerate) * 1000);
+  //printf("Buffer size: %lu => %.2f ms\n", opt->bufsize, ((float)opt->bufsize / opt->samplerate) * 1000);
   printf("Loops: %d\n", opt->repeat_count);
   printf("Fade out: %d seconds\n", opt->fade_seconds);
   printf("Auto comment: %s\n", opt->auto_comment?"true":"false");

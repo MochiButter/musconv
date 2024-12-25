@@ -21,13 +21,16 @@ void find_and_replace(string &base, const string &find, const string &replace){
   }
 }
 
-string get_output_path(const char *outpath, const string &inpath_fstem, WRITESEL encoder, const map<string,string> &comments){
+string get_output_path(const char *outpath, const string &inpath_fstem, enum writesel encoder, const map<string,string> &comments){
   string out = outpath;
   find_and_replace(out, "%(fn)", inpath_fstem);
   string fext = "";
   switch(encoder){
     case WRITER_OPUS:
       fext = "opus";
+      break;
+    case WRITER_FLAC:
+      fext = "flac";
       break;
     default:
       // bad args 
@@ -63,9 +66,8 @@ bool music_convert(char *path, musconv_opts *opt){
   if(opt->play_seconds){
     // play for n samples, which is the seconds specified, minus the fadeout time.
     time_max = opt->samplerate * (opt->play_seconds - opt->fade_seconds);
+    printf("Playing for %d seconds => %lu samples\n", opt->play_seconds, time_max);
   }
-  printf("Playing for %d seconds => %lu samples\n", opt->play_seconds, time_max);
-
 
   filesystem::path p(path);
   string fdir = p.parent_path().string();
@@ -91,7 +93,7 @@ bool music_convert(char *path, musconv_opts *opt){
   }
 
   // TODO overwrite [y/N] prompt
-  out = get_output_path(out_template, fstem, WRITER_OPUS, comments);
+  out = get_output_path(out_template, fstem, opt->encoder, comments);
   outpath = filesystem::path(out);
   // check if path is writeable, skip if not
   if((filesystem::perms::owner_write & filesystem::status(outpath).permissions()) 
@@ -105,7 +107,7 @@ bool music_convert(char *path, musconv_opts *opt){
     filesystem::create_directories(outpath.parent_path());
   }
 
-  w = select_writer(out, WRITER_OPUS, comments, opt);
+  w = select_writer(out, opt->encoder, comments, opt);
   if(w == NULL){
     success = false;
     goto clean;
@@ -116,7 +118,7 @@ bool music_convert(char *path, musconv_opts *opt){
     size_t c = 0;
     c = r->read_file(buffer.data(), buffersize);
     time_count += c;
-    if(time_max > 1 && time_count > time_max){
+    if(time_max && time_count > time_max){
       size_t write_diff;
       write_diff = time_count - time_max;
       w->write_file(buffer.data(),write_diff);

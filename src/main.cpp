@@ -8,7 +8,8 @@
 
 using namespace std;
 
-#define VERSION 0.3
+#define VERSION_MAJOR 0
+#define VERSION_MINOR 4
 
 /* Prints information on how to use options.
  * param name the name of the executable
@@ -29,12 +30,13 @@ void usage(const char* name){
   printf("                       %%(title) - The source file's title extracted from the reader.\n");
   printf("                       %%(artist) - The source file's artist extracted from the reader.\n");
   printf("                       ex. \"%%(artist) - %%(title) [%%(fn)].%%(ext)\"");
-  printf("  --supported        Shows the list of supported file formats.\n");
+  printf("  --supported        Prints a list of supported file formats.\n");
   printf("\nRendering options:\n");
+  printf("  --encoder s        Sets the encoder to s, options \"opus\" or \"flac\" are valid.\n");
   printf("  --samplerate n     Set samplerate to n.\n");
   printf("  --repeat-count n   Repeat the song n times after playing once.\n");
   printf("  --channels n       Sets the channel to n, options 1, 2, or 4.\n");
-  //printf("  --dry-run          Run the program, skipping writing to file.\n");
+  printf("  --dry-run          Run the program, skipping writing to file.\n");
   printf("  --time n           Specifies the time in seconds the song should play for. INCLUDES the fadeout time.\n");
   printf("  --fadeout n        After the song finishes playing, play for another n seconds and fade out.\n");
   printf("\nComment options:\n");
@@ -60,6 +62,7 @@ int main(int argc, char **argv){
     {"version", no_argument, 0, 'V'},
     {"quiet", no_argument, 0, 'q'},
     {"output", required_argument, 0, 'o'},
+    {"encoder", required_argument, 0, 0},
     {"supported", no_argument, 0, 0},
     {"samplerate", required_argument, 0, 0},
     {"channels", required_argument, 0, 0},
@@ -85,11 +88,23 @@ int main(int argc, char **argv){
     switch (c){
       case 0:
         opname = long_options[option_index].name;
-        if(strcmp(opname,"samplerate") == 0){ // set sample rate 
+        if(strcmp(opname,"encoder") == 0){
+          if(strcmp(optarg,"opus") == 0){
+            opt.encoder = WRITER_OPUS;
+          }
+          else if(strcmp(optarg,"flac") == 0){
+            opt.encoder = WRITER_FLAC;
+          }
+          else{
+            usage(argv[0]);
+            exit(EXIT_FAILURE);
+          }
+        }
+        else if(strcmp(opname,"samplerate") == 0){ // set sample rate 
           opt.samplerate = atoi(optarg);
           opt.bufsize = opt.samplerate * 0.02;
         }
-        if(strcmp(opname,"channels") == 0){ // set channels
+        else if(strcmp(opname,"channels") == 0){ // set channels
           int32_t ch = atoi(optarg);
           switch(ch){
             case 1:
@@ -162,20 +177,19 @@ int main(int argc, char **argv){
         }
         else if(strcmp(opname, "dry-run") == 0){ // skips encoding to file
           opt.dry_run = true;
+          printf("======Doing a dry-run: no files will be written======\n");
         }
-        /*
         else if(strcmp(opname, "supported") == 0){ // print list of supported files
           supported();
-          return 0;
+          exit(EXIT_SUCCESS);
         }
-        */
         break;
       case 'h': // print usage
         usage(argv[0]);
         exit(EXIT_SUCCESS);
         break;
       case 'V'://version
-        printf("%s %f\n",argv[0], VERSION);
+        printf("musconv version %d.%d\n", VERSION_MAJOR, VERSION_MINOR);
         exit(EXIT_SUCCESS);
         break;
       case 'q': // don't print
@@ -207,12 +221,14 @@ int main(int argc, char **argv){
 
   while(optind < argc){
     char *path = argv[optind++];
-    bool success = music_convert(path, &opt);
-    if(!success){
-      printf("Failed converting %s\n", path);
-    }
-    else {
-      printf("Success\n");
+    if(!opt.dry_run){
+      bool success = music_convert(path, &opt);
+      if(!success){
+        printf("Failed converting %s\n", path);
+      }
+      else {
+        printf("Success\n");
+      }
     }
   }
   exit(EXIT_SUCCESS);

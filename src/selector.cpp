@@ -7,6 +7,7 @@
 #include "writer.h"
 #include "mpt.h"
 #include "ope.h"
+#include "flacenc.h"
 #include "option.h"
 
 using namespace std;
@@ -30,15 +31,27 @@ Reader *select_reader(string path, string ext, musconv_opts *opt){
   return ret;
 }
 
+void supported(void){
+  //Mpt::print_supported();
+}
+
 /* Encoder type selector.
  * Selects encoder based on user input.
  */
-Writer *select_writer(string path, WRITESEL encoder, const map<string, string> &comments, musconv_opts *opt){
+Writer *select_writer(string path, enum writesel encoder, const map<string, string> &comments, musconv_opts *opt){
   Writer *ret = NULL;
   switch(encoder){
     case WRITER_OPUS:
       try{
         ret = new Opus(path, comments, opt);
+      }
+      catch(exception &e){
+        ret = NULL;
+      }
+      break;
+    case WRITER_FLAC:
+      try{
+        ret = new Flac(path, comments, opt);
       }
       catch(exception &e){
         ret = NULL;

@@ -5,14 +5,14 @@ A re-write in c++ for
 [modopus](https://github.com/MochiButter/modopus)
 , to be more modular and allow easier expansion.
 
-## building
-run `make`, libopenmpt and libopusenc are required. 
-The binary will be in the root directory named `./musconv`
+## Building
+run `make`, libopenmpt, libopusenc, and libFLAC are required. 
+The binary will be in the build directory called `musconv`
 
-## usage
+## Usage
 ```
 Usage:
-  ./musconv <option(s)> <input filename>
+  build/musconv <option(s)> <input filename>
 The output file will have the same name as the input file, with .opus file extension.
 
 Options:
@@ -29,6 +29,7 @@ Options:
                        ex. "%(artist) - %(title) [%(fn)].%(ext)"  --supported        Shows the list of supported file formats.
 
 Rendering options:
+  --encoder s        Sets the encoder to s, options "opus" or "flac" are valid.
   --samplerate n     Set samplerate to n.
   --repeat-count n   Repeat the song n times after playing once.
   --channels n       Sets the channel to n, options 1, 2, or 4.

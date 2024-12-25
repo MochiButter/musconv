@@ -10,10 +10,7 @@
 
 using namespace std;
 
-enum WRITESEL{
-  WRITER_OPUS = 1
-};
-
+void supported(void);
 Reader *select_reader(string, string, musconv_opts *);
-Writer *select_writer(string, WRITESEL, const map<string, string> &, musconv_opts *);
+Writer *select_writer(string, enum writesel, const map<string, string> &, musconv_opts *);
 #endif

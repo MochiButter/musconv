@@ -1,8 +1,13 @@
-#ifndef OPTION
-#define OPTION
+#ifndef OPTION_H
+#define OPTION_H
 
 #include <stddef.h>
 #include <stdint.h>
+
+enum writesel{
+  WRITER_OPUS,
+  WRITER_FLAC
+};
 
 typedef struct{
   /* for both reader and writer */
@@ -14,6 +19,9 @@ typedef struct{
   int32_t repeat_count;
   //int32_t interpolation;
   //int32_t gain;
+
+  /* for the writer */
+  enum writesel encoder;
   
   /* for main */
   int32_t fade_seconds;
