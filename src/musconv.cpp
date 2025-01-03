@@ -167,7 +167,7 @@ bool music_convert(char *path, musconv_opts *opt){
         volume = (samples_left + buffersize - i) / (float)fade_samples;
         // scale volume for each interleaved frame
         for(j = 0; j < (size_t)channels; j++){
-          buffer[channels * i + j] = (int16_t)(buffer[channels * i] * volume);
+          buffer[channels * i + j] = (int16_t)(buffer[channels * i + j] * volume);
         }
       }
       w->write_file(buffer.data(), wrsize);
