@@ -25,6 +25,7 @@ void init_opts(musconv_opts *opt){
   opt->print_meta = false;
   opt-> dry_run = false;
   opt->quiet = false;
+  opt->overwrite = false;
 }
 
 void print_opts(musconv_opts *opt){

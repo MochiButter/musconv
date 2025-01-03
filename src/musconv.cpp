@@ -1,5 +1,7 @@
 #include "musconv.h"
 
+#include "unistd.h"
+
 #include <string>
 #include <filesystem>
 #include <map>
@@ -92,7 +94,6 @@ bool music_convert(char *path, musconv_opts *opt){
     r->get_comments(&comments);
   }
 
-  // TODO overwrite [y/N] prompt
   out = get_output_path(out_template, fstem, opt->encoder, comments);
   outpath = filesystem::path(out);
   // check if path is writeable, skip if not
@@ -102,6 +103,26 @@ bool music_convert(char *path, musconv_opts *opt){
     success = false;
     goto clean;
   }
+
+  // check if file is to be overwritten, if it already exists
+  if(!opt->overwrite && filesystem::exists(outpath)){
+    printf("File %s already exists. Overwrite? [y/N] ", out.c_str());
+
+    char user_in = getchar();
+    if(user_in != '\n'){
+      char tmp;
+      while((tmp = getchar()) != EOF && tmp != '\n');
+    }
+
+    if(user_in == 'y' || user_in == 'Y'){
+      printf("Overwriting...\n");
+    }
+    else{
+      printf("Skipping...\n");
+      goto clean;
+    }
+  }
+
   // creates any directory in path that does not exixt
   if(outpath.has_parent_path()){
     filesystem::create_directories(outpath.parent_path());

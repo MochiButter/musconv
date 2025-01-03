@@ -36,6 +36,7 @@ typedef struct{
   bool print_meta;
   bool dry_run;
   bool quiet;
+  bool overwrite;
 } musconv_opts;
 
 void init_opts(musconv_opts *);

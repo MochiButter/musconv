@@ -20,16 +20,17 @@ void usage(const char* name){
   printf("The output file will have the same name as the input file, with .opus file extension.\n");
   printf("\nOptions:\n");
   printf("  -h, --help         Shows this.\n");
-  printf("  -V, --version      Prtints the version.\n");
-  printf("  -v, --verbose      Prtints more info.\n");
+  printf("  -V, --version      Prints the version.\n");
+  printf("  -v, --verbose      Prints more info.\n");
   printf("  -q, --quiet        Runs without printing information.\n");
-  printf("  -o <string>        Output file template. String must be in quatations.\n");
+  printf("  -o <string>        Output file template. String must be in quotations.\n");
   printf("                     Supports the following:\n");
   printf("                       %%(fn) - The source file's filename without the extension.\n");
   printf("                       %%(ext) - The destination file's extension without the dot.\n");
   printf("                       %%(title) - The source file's title extracted from the reader.\n");
   printf("                       %%(artist) - The source file's artist extracted from the reader.\n");
   printf("                       ex. \"%%(artist) - %%(title) [%%(fn)].%%(ext)\"");
+  printf("  -y                 Automatically overwrites a file when asked.\n");
   printf("  --supported        Prints a list of supported file formats.\n");
   printf("\nRendering options:\n");
   printf("  --encoder s        Sets the encoder to s, options \"opus\" or \"flac\" are valid.\n");
@@ -81,7 +82,7 @@ int main(int argc, char **argv){
   };
 
   while(1){
-    c = getopt_long(argc, argv, "hvVqo:", long_options, &option_index);
+    c = getopt_long(argc, argv, "yhvVqo:", long_options, &option_index);
     if( c == -1)
       break;
 
@@ -183,6 +184,9 @@ int main(int argc, char **argv){
           supported();
           exit(EXIT_SUCCESS);
         }
+        break;
+      case 'y':
+        opt.overwrite = true;
         break;
       case 'h': // print usage
         usage(argv[0]);
