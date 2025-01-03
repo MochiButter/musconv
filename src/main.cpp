@@ -29,7 +29,7 @@ void usage(const char* name){
   printf("                       %%(ext) - The destination file's extension without the dot.\n");
   printf("                       %%(title) - The source file's title extracted from the reader.\n");
   printf("                       %%(artist) - The source file's artist extracted from the reader.\n");
-  printf("                       ex. \"%%(artist) - %%(title) [%%(fn)].%%(ext)\"");
+  printf("                       ex. \"%%(artist) - %%(title) [%%(fn)].%%(ext)\"\n");
   printf("  -y                 Automatically overwrites a file when asked.\n");
   printf("  --supported        Prints a list of supported file formats.\n");
   printf("\nRendering options:\n");

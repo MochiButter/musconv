@@ -26,7 +26,8 @@ Options:
                        %(ext) - The destination file's extension without the dot.
                        %(title) - The source file's title extracted from the reader.
                        %(artist) - The source file's artist extracted from the reader.
-                       ex. "%(artist) - %(title) [%(fn)].%(ext)"  -y                 Automatically overwrites a file when asked.
+                       ex. "%(artist) - %(title) [%(fn)].%(ext)"  
+  -y                 Automatically overwrites a file when asked.
   --supported        Prints a list of supported file formats.
 
 Rendering options:
