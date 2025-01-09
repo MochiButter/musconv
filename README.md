@@ -1,10 +1,6 @@
 # musconv
 Music conversion utility, currently supports various trackers to opus.
 
-A re-write in c++ for 
-[modopus](https://github.com/MochiButter/modopus)
-, to be more modular and allow easier expansion.
-
 ## Building
 run `make`, libopenmpt, libopusenc, and libFLAC are required. 
 The binary will be in the build directory called `musconv`
