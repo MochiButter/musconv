@@ -2,7 +2,14 @@
 Music conversion utility, currently supports various trackers to opus.
 
 ## Building
-run `make`, libopenmpt, libopusenc, and libFLAC are required. 
+To run `cmake`:
+```
+mkdir -p ./build
+cd ./build
+cmake ..
+make
+```
+libopenmpt, libopusenc, and FLAC are required. 
 The binary will be in the build directory called `musconv`
 
 ## Usage
