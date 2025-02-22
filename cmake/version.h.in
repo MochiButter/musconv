@@ -1,0 +1,2 @@
+#define VERSION_MAJOR @musconv_VERSION_MAJOR@
+#define VERSION_MINOR @musconv_VERSION_MINOR@

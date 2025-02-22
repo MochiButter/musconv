@@ -5,11 +5,9 @@
 
 #include "musconv.h"
 #include "option.h"
+#include "version.h"
 
 using namespace std;
-
-#define VERSION_MAJOR 0
-#define VERSION_MINOR 4
 
 /* Prints information on how to use options.
  * param name the name of the executable
