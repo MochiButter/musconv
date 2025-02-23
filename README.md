@@ -1,13 +1,14 @@
 # musconv
-Music conversion utility, currently supports various trackers to opus.
+Music conversion utility, currently supports various trackers and video game music formats to opus and flac.
+(vgm in progress)
 
 ## Building
-To run `cmake`:
+First, clone the libvgm submodule.
+Then run cmake as normal.
 ```
-mkdir -p ./build
-cd ./build
-cmake ..
-make
+git submodule update --init
+cmake -B build
+cmake --build ./build
 ```
 libopenmpt, libopusenc, and FLAC are required. 
 The binary will be in the build directory called `musconv`

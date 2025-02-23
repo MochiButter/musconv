@@ -6,6 +6,7 @@
 #include "reader.h"
 #include "writer.h"
 #include "mpt.h"
+#include "vgm.hpp"
 #include "ope.h"
 #include "flacenc.h"
 #include "option.h"
@@ -24,6 +25,9 @@ Reader *select_reader(string path, string ext, musconv_opts *opt){
     catch(exception &e){
       ret = NULL;
     }
+  }
+  else if(Vgm::is_supported(ext)){
+    ret = new Vgm(path, opt);
   }
   else{
     ret = NULL;
