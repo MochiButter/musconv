@@ -34,4 +34,4 @@ add_executable(musconv
 )
 
 include_directories("/usr/include/opus")
-target_link_libraries(musconv ${musconv_LIBRARIES} vgm-player)
+target_link_libraries(musconv ${musconv_LIBRARIES} vgm-player vgm-utils)
