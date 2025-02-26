@@ -1,4 +1,4 @@
-#include "ope.h"
+#include "ope.hpp"
 
 #include <stdio.h>
 
@@ -9,8 +9,8 @@
 
 #include <opusenc.h>
 
-#include "writer.h"
-#include "option.h"
+#include "writer.hpp"
+#include "option.hpp"
 
 using namespace std;
 

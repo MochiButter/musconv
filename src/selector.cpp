@@ -1,15 +1,15 @@
-#include "selector.h"
+#include "selector.hpp"
 
 #include <map>
 #include <string>
 
-#include "reader.h"
-#include "writer.h"
-#include "mpt.h"
+#include "reader.hpp"
+#include "writer.hpp"
+#include "mpt.hpp"
 #include "vgm.hpp"
-#include "ope.h"
-#include "flacenc.h"
-#include "option.h"
+#include "ope.hpp"
+#include "flacenc.hpp"
+#include "option.hpp"
 
 using namespace std;
 

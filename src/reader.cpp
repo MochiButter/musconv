@@ -1,9 +1,9 @@
-#include "reader.h"
+#include "reader.hpp"
 
 #include <iostream>
 #include <string>
 
-#include "option.h"
+#include "option.hpp"
 
 using namespace std;
 

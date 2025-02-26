@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "option.h"
+#include "option.hpp"
 
 void init_opts(musconv_opts *opt){
   opt->samplerate = 48000;

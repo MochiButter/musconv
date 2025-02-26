@@ -7,8 +7,8 @@
 #include <FLAC/format.h>
 #include <FLAC/stream_encoder.h>
 
-#include "writer.h"
-#include "option.h"
+#include "writer.hpp"
+#include "option.hpp"
 
 using namespace std;
 

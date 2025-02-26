@@ -4,9 +4,9 @@
 #include <string>
 #include <map>
 
-#include "reader.h"
-#include "writer.h"
-#include "option.h"
+#include "reader.hpp"
+#include "writer.hpp"
+#include "option.hpp"
 
 using namespace std;
 

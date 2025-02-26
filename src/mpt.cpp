@@ -1,4 +1,4 @@
-#include "mpt.h"
+#include "mpt.hpp"
 
 #include <stdio.h>
 
@@ -7,8 +7,8 @@
 
 #include <libopenmpt/libopenmpt.hpp>
 
-#include "reader.h"
-#include "option.h"
+#include "reader.hpp"
+#include "option.hpp"
 
 using namespace std;
 

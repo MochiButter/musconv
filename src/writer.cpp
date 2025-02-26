@@ -1,6 +1,6 @@
-#include "writer.h"
+#include "writer.hpp"
 
-#include "option.h"
+#include "option.hpp"
 
 using namespace std;
 

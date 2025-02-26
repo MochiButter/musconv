@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.11)
-project(musconv VERSION 0.4)
+project(musconv VERSION 0.5)
 
 # libvgm
 option(BUILD_TESTS "build test programs" OFF)

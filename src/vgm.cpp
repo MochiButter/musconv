@@ -15,8 +15,8 @@
 #include <utils/DataLoader.h>
 #include <utils/FileLoader.h>
 
-#include "reader.h"
-#include "option.h"
+#include "reader.hpp"
+#include "option.hpp"
 
 using namespace std;
 static DATA_LOADER* file_req_cb(void *, PlayerBase *, const char *);

@@ -3,8 +3,8 @@
 #include <getopt.h>
 #include <string.h>
 
-#include "musconv.h"
-#include "option.h"
+#include "musconv.hpp"
+#include "option.hpp"
 #include "version.h"
 
 using namespace std;

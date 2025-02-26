@@ -4,8 +4,8 @@
 #include <string>
 #include <map>
 
-#include "selector.h"
-#include "option.h"
+#include "selector.hpp"
+#include "option.hpp"
 
 using namespace std;
 

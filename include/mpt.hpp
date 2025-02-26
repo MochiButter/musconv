@@ -6,8 +6,8 @@
 
 #include <libopenmpt/libopenmpt.hpp>
 
-#include "reader.h"
-#include "option.h"
+#include "reader.hpp"
+#include "option.hpp"
 
 using namespace std;
 

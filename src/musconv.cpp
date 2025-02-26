@@ -1,6 +1,6 @@
-#include "musconv.h"
+#include "musconv.hpp"
 
-#include "unistd.h"
+#include <unistd.h>
 
 #include <string>
 #include <filesystem>
@@ -8,10 +8,10 @@
 #include <iostream>
 #include <vector>
 
-#include "reader.h"
-#include "writer.h"
-#include "selector.h"
-#include "option.h"
+#include "reader.hpp"
+#include "writer.hpp"
+#include "selector.hpp"
+#include "option.hpp"
 
 using namespace std;
 
@@ -61,6 +61,8 @@ bool music_convert(char *path, musconv_opts *opt){
   int32_t samplerate = opt->samplerate;
   int32_t buffersize = opt->bufsize;
   int32_t fade_seconds = opt->fade_seconds;
+  // TODO rename buffer, sample, and frames to be consistent
+  // TODO limit vgm channels to two
   vector<int16_t> buffer(buffersize * opt->channels);
 
   size_t time_count = 0;
@@ -94,6 +96,7 @@ bool music_convert(char *path, musconv_opts *opt){
     r->get_comments(&comments);
   }
 
+  // TODO move this out of this file
   out = get_output_path(out_template, fstem, opt->encoder, comments);
   outpath = filesystem::path(out);
   // check if path is writeable, skip if not
