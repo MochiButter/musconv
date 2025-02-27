@@ -18,7 +18,7 @@ class Flac : public Writer{
     FLAC__StreamMetadata *metadata[2];
 
   public:
-    Flac(string, const map<string, string> &, musconv_opts *);
+    Flac(const string *, const map<string, string> &, musconv_opts *);
     virtual ~Flac();
 
     virtual size_t write_file(const int16_t *, size_t) override;

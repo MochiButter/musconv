@@ -17,7 +17,7 @@ class Opus : public Writer{
     OggOpusComments *comm;
 
   public:
-    Opus(string, const map<string, string> &, musconv_opts *);
+    Opus(const string *, const map<string, string> &, musconv_opts *);
     virtual ~Opus();
 
     virtual size_t write_file(const int16_t *, size_t) override;

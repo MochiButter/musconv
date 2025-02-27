@@ -1,63 +1,50 @@
 #include "musconv.hpp"
 
-#include <unistd.h>
-
 #include <string>
 #include <filesystem>
 #include <map>
-#include <iostream>
 #include <vector>
 
 #include "reader.hpp"
 #include "writer.hpp"
 #include "selector.hpp"
 #include "option.hpp"
+#include "fileutil.hpp"
 
 using namespace std;
 
-void find_and_replace(string &base, const string &find, const string &replace){
-  size_t ind = 0;
-  while((ind = base.find(find, ind)) != string::npos){
-    base.replace(ind, find.size(), replace);
-    ind += replace.size();
+Musconv::Musconv(const string *source_path, const string *dest_path, musconv_opts *option){
+  opt = option;
+  init_reader(source_path);
+  init_writer(dest_path);
+}
+
+Musconv::~Musconv(void){
+  delete(r);
+  delete(w);
+}
+
+void Musconv::init_reader(const string *path){
+  const string fext = get_fext(path);
+  r = select_reader(path, &fext, opt);
+  if (!r){
+    fprintf(stderr, "Reader fail\n");
+    throw runtime_error("Failed creating reader");
+  }
+  if(opt->auto_comment){
+    r->get_comments(&comments);
   }
 }
 
-string get_output_path(const char *outpath, const string &inpath_fstem, enum writesel encoder, const map<string,string> &comments){
-  string out = outpath;
-  find_and_replace(out, "%(fn)", inpath_fstem);
-  string fext = "";
-  switch(encoder){
-    case WRITER_OPUS:
-      fext = "opus";
-      break;
-    case WRITER_FLAC:
-      fext = "flac";
-      break;
-    default:
-      // bad args 
-      break;
+void Musconv::init_writer(const string *path){
+  w = select_writer(path, comments, opt);
+  if (!w){
+    fprintf(stderr, "Writer fail\n");
+    throw runtime_error("Failed creating writer");
   }
-  find_and_replace(out, "%(ext)", fext);
-  string buf = "";
-  if(comments.find("title") != comments.end()){
-    buf = comments.at("title");
-  }
-  find_and_replace(out, "%(title)", buf);
-  buf = "";
-  if(comments.find("artist") != comments.end()){
-    buf = comments.at("artist");
-  }
-  find_and_replace(out, "%(artist)", buf);
-  return out;
 }
 
-bool music_convert(char *path, musconv_opts *opt){
-  bool success = true;
-  const char *out_template = opt->out_template;
-  if(out_template == NULL){
-    out_template = "convert/%(fn).%(ext)";
-  }
+bool Musconv::convert(void){
   int32_t samplerate = opt->samplerate;
   int32_t buffersize = opt->bufsize;
   int32_t fade_seconds = opt->fade_seconds;
@@ -73,71 +60,6 @@ bool music_convert(char *path, musconv_opts *opt){
     printf("Playing for %d seconds => %lu samples\n", opt->play_seconds, time_max);
   }
 
-  filesystem::path p(path);
-  string fdir = p.parent_path().string();
-  string fstem = p.stem().string();
-  string fext = p.extension().string().erase(0,1);
-
-  Reader *r = NULL;
-  Writer *w = NULL;
-  map<string, string> comments;
-  filesystem::path outpath;
-  string out;
-
-  // TODO: error catch and throwing 
-  r = select_reader(path, fext, opt);
-  if(r == NULL){
-    success = false;
-    goto clean;
-  }
-
-  // Get comments from reader
-  if(opt->auto_comment){
-    r->get_comments(&comments);
-  }
-
-  // TODO move this out of this file
-  out = get_output_path(out_template, fstem, opt->encoder, comments);
-  outpath = filesystem::path(out);
-  // check if path is writeable, skip if not
-  if((filesystem::perms::owner_write & filesystem::status(outpath).permissions()) 
-    != filesystem::perms::owner_write){
-    fprintf(stderr, "Not able to write to %s\n", out.data());
-    success = false;
-    goto clean;
-  }
-
-  // check if file is to be overwritten, if it already exists
-  if(!opt->overwrite && filesystem::exists(outpath)){
-    printf("File %s already exists. Overwrite? [y/N] ", out.c_str());
-
-    char user_in = getchar();
-    if(user_in != '\n'){
-      char tmp;
-      while((tmp = getchar()) != EOF && tmp != '\n');
-    }
-
-    if(user_in == 'y' || user_in == 'Y'){
-      printf("Overwriting...\n");
-    }
-    else{
-      printf("Skipping...\n");
-      goto clean;
-    }
-  }
-
-  // creates any directory in path that does not exixt
-  if(outpath.has_parent_path()){
-    filesystem::create_directories(outpath.parent_path());
-  }
-
-  w = select_writer(out, opt->encoder, comments, opt);
-  if(w == NULL){
-    success = false;
-    goto clean;
-  }
-  
-  printf("Writing to %s\n", out.data());
   while(1){
     size_t c = 0;
     c = r->read_file(buffer.data(), buffersize);
@@ -176,8 +98,5 @@ bool music_convert(char *path, musconv_opts *opt){
       w->write_file(buffer.data(), wrsize);
     }
   }
-clean:
-  if(r) delete(r);
-  if(w) delete(w);
-  return success;
+  return true;
 }

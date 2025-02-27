@@ -21,8 +21,8 @@
 using namespace std;
 static DATA_LOADER* file_req_cb(void *, PlayerBase *, const char *);
 
-Vgm::Vgm(string path, musconv_opts *opt) : Reader(opt){
-  data_loader = FileLoader_Init(path.c_str());
+Vgm::Vgm(const string *path, musconv_opts *opt) : Reader(opt){
+  data_loader = FileLoader_Init(path->c_str());
   if (!data_loader){
     fprintf(stderr, "Error in Vgm(): failed to open source file.\n");
     throw runtime_error("Vgm create error");
@@ -136,7 +136,7 @@ ssize_t Vgm::get_comments(map<string,string> *comments) const{
   return count;
 }
 
-bool Vgm::is_supported(string ext){
+bool Vgm::is_supported(const string ext){
   bool supported = false;
   supported |= ext == "dro";
   supported |= ext == "gym";

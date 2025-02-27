@@ -21,6 +21,7 @@ configure_file("cmake/version.h.in" "version.h")
 
 include_directories("include")
 add_executable(musconv 
+  "src/fileutil.cpp"
   "src/flacenc.cpp"
   "src/main.cpp"
   "src/mpt.cpp"

@@ -15,13 +15,13 @@ class Mpt : public Reader{
   private:
     openmpt::module *mod = NULL;
   public:
-    Mpt(string, musconv_opts *);
+    Mpt(const string *, musconv_opts *);
     virtual ~Mpt();
 
     virtual size_t read_file(int16_t *, size_t) override;
     
     virtual ssize_t get_comments(map<string,string> *) const override;
 
-    static bool is_supported(string);
+    static bool is_supported(const string);
 };
 #endif

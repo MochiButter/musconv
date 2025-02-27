@@ -16,9 +16,9 @@ using namespace std;
 /* Decoder type selector.
  * Selects which Reader subclass to use to decode given file, or none if unsupported. 
  */
-Reader *select_reader(string path, string ext, musconv_opts *opt){
+Reader *select_reader(const string *path, const string *ext, musconv_opts *opt){
   Reader *ret = NULL;
-  if(Mpt::is_supported(ext)){
+  if(Mpt::is_supported(*ext)){
     try{
       ret = new Mpt(path, opt);
     }
@@ -26,8 +26,13 @@ Reader *select_reader(string path, string ext, musconv_opts *opt){
       ret = NULL;
     }
   }
-  else if(Vgm::is_supported(ext)){
-    ret = new Vgm(path, opt);
+  else if(Vgm::is_supported(*ext)){
+    try{
+      ret = new Vgm(path, opt);
+    }
+    catch(exception &e){
+      ret = NULL;
+    }
   }
   else{
     ret = NULL;
@@ -42,9 +47,9 @@ void supported(void){
 /* Encoder type selector.
  * Selects encoder based on user input.
  */
-Writer *select_writer(string path, enum writesel encoder, const map<string, string> &comments, musconv_opts *opt){
+Writer *select_writer(const string *path, const map<string, string> &comments, musconv_opts *opt){
   Writer *ret = NULL;
-  switch(encoder){
+  switch(opt->encoder){
     case WRITER_OPUS:
       try{
         ret = new Opus(path, comments, opt);

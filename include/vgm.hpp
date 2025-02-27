@@ -22,13 +22,13 @@ class Vgm: public Reader{
     PlayerBase *player_emu;
     bool finished_main_loop;
   public:
-    Vgm(string, musconv_opts *);
+    Vgm(const string *, musconv_opts *);
     virtual ~Vgm();
 
     virtual size_t read_file(int16_t *, size_t) override;
     
     virtual ssize_t get_comments(map<string,string> *) const override;
 
-    static bool is_supported(string);
+    static bool is_supported(const string);
 };
 #endif

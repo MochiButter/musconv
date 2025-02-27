@@ -9,8 +9,17 @@
 
 using namespace std;
 
-void find_and_replace(string &, const string &, const string &);
-string get_output_path(const string &, const string &, enum writesel, const map<string, string> &);
-
-bool music_convert(char *, musconv_opts *);
+class Musconv {
+  private:
+    Reader *r;
+    Writer *w;
+    musconv_opts *opt;
+    map<string, string> comments;
+    void init_reader(const string *);
+    void init_writer(const string *);
+  public:
+    Musconv(const string *, const string *, musconv_opts *);
+    ~Musconv(void);
+    bool convert(void);
+};
 #endif

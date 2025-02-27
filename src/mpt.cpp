@@ -12,9 +12,9 @@
 
 using namespace std;
 
-Mpt::Mpt(string path, musconv_opts *opt) : Reader(opt){
+Mpt::Mpt(const string *path, musconv_opts *opt) : Reader(opt){
   try{
-    ifstream file(path, ios::binary);
+    ifstream file(*path, ios::binary);
     mod = new openmpt::module(file);
     file.close();
   } 
@@ -75,6 +75,6 @@ ssize_t Mpt::get_comments(map<string,string> *comments) const{
 }
 
 // Wrapper for openmpt supported files. No dot in ext
-bool Mpt::is_supported(string ext){
+bool Mpt::is_supported(const string ext){
   return openmpt::is_extension_supported2(ext);
 }

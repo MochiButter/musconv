@@ -17,7 +17,7 @@
 
 using namespace std;
 
-Flac::Flac(string path, const map<string, string> &comments, musconv_opts *opt) : Writer(opt){
+Flac::Flac(const string *path, const map<string, string> &comments, musconv_opts *opt) : Writer(opt){
   FLAC__bool error = true;
   FLAC__StreamEncoderInitStatus init_ret;
 
@@ -46,7 +46,7 @@ Flac::Flac(string path, const map<string, string> &comments, musconv_opts *opt) 
     throw runtime_error("Flac comments failure");
   }
 
-  const char *p = path.c_str();
+  const char *p = path->c_str();
   init_ret = FLAC__stream_encoder_init_file(enc, p, NULL, NULL);
   if(init_ret != FLAC__STREAM_ENCODER_INIT_STATUS_OK) {
     fprintf(stderr, "Error in Flac(): %s\n", FLAC__StreamEncoderInitStatusString[init_ret]);
@@ -101,7 +101,8 @@ ssize_t Flac::add_comments(const map<string, string> &comments){
     const char *key = pair.first.c_str();
     const char *value = pair.second.c_str();
     error &= FLAC__metadata_object_vorbiscomment_entry_from_name_value_pair(&comm, key, value);
-    error &= FLAC__metadata_object_vorbiscomment_append_comment(metadata[0], comm, true);
+    //error &= FLAC__metadata_object_vorbiscomment_append_comment(metadata[0], comm, true);
+    error &= FLAC__metadata_object_vorbiscomment_append_comment(metadata[0], comm, false);
     if(!error){
       fprintf(stderr, "Flac::add_comments failure: failed to add a comment\n");
       return -1;

@@ -14,7 +14,7 @@
 
 using namespace std;
 
-Opus::Opus(string path, const map<string, string> &comments, musconv_opts *opt) : Writer(opt){
+Opus::Opus(const string *path, const map<string, string> &comments, musconv_opts *opt) : Writer(opt){
   (void)opt;
   int error = OPE_OK;
   comm = ope_comments_create();
@@ -32,7 +32,7 @@ Opus::Opus(string path, const map<string, string> &comments, musconv_opts *opt) 
   }
 
   error = OPE_OK;
-  const char *p = path.c_str();
+  const char *p = path->c_str();
   // surround if 4 channels, mono/stereo if not
   int surround = (Writer::channels == 4)?1:0;
   printf("channels: %d\tsurround: %d\n", Writer::channels, surround);

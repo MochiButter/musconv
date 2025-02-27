@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "musconv.hpp"
+#include "fileutil.hpp"
 #include "option.hpp"
 #include "version.h"
 
@@ -33,7 +34,7 @@ void usage(const char* name){
   printf("\nRendering options:\n");
   printf("  --encoder s        Sets the encoder to s, options \"opus\" or \"flac\" are valid.\n");
   printf("  --samplerate n     Set samplerate to n.\n");
-  printf("  --repeat-count n   Repeat the song n times after playing once.\n");
+  printf("  --repeat-count n   Repeat the song n times after playing once. Will not affect songs that do not have loops.\n");
   printf("  --channels n       Sets the channel to n, options 1, 2, or 4.\n");
   printf("  --dry-run          Run the program, skipping writing to file.\n");
   printf("  --time n           Specifies the time in seconds the song should play for. INCLUDES the fadeout time.\n");
@@ -45,7 +46,7 @@ void usage(const char* name){
 int main(int argc, char **argv){
   if(argc < 2){
     printf("Usage: %s <option(s)> <input filename>\n",argv[0]);
-    exit(EXIT_FAILURE);
+    return 1;
   }
 
   musconv_opts opt;
@@ -96,7 +97,7 @@ int main(int argc, char **argv){
           }
           else{
             usage(argv[0]);
-            exit(EXIT_FAILURE);
+            return 1;
           }
         }
         else if(strcmp(opname,"samplerate") == 0){ // set sample rate 
@@ -113,7 +114,7 @@ int main(int argc, char **argv){
               break;
             default:
               printf("Channel count must be 1, 2, or 4.\n");
-              exit(EXIT_FAILURE);
+              return 1;
           }
         }
         else if(strcmp(opname, "auto-comment") == 0){ // add comments from input file
@@ -180,7 +181,7 @@ int main(int argc, char **argv){
         }
         else if(strcmp(opname, "supported") == 0){ // print list of supported files
           supported();
-          exit(EXIT_SUCCESS);
+          return 1;
         }
         break;
       case 'y':
@@ -188,11 +189,11 @@ int main(int argc, char **argv){
         break;
       case 'h': // print usage
         usage(argv[0]);
-        exit(EXIT_SUCCESS);
+        return 0;
         break;
       case 'V'://version
         printf("musconv version %d.%d\n", VERSION_MAJOR, VERSION_MINOR);
-        exit(EXIT_SUCCESS);
+        return 0;
         break;
       case 'q': // don't print
         opt.quiet = true;
@@ -202,36 +203,80 @@ int main(int argc, char **argv){
         break;
       case '?': // option not recognized
         usage(argv[0]);
-        exit(EXIT_FAILURE);
+        return 1;
         break;
     }
   }
 
   if(optind >= argc){
     usage(argv[0]);
-    exit(EXIT_FAILURE);
+    return 1;
   }
 
   if((opt.play_seconds) && opt.fade_seconds >= opt.play_seconds){
     printf("Fadeout time must be at least 1 seconds less than playback time\n");
-    exit(EXIT_FAILURE);
+    return 1;
   }
 
   if(!opt.quiet){
     print_opts(&opt);
   }
 
+  const string out_template = (opt.out_template != NULL) ? opt.out_template : "convert/%(fn).%(ext)";
+
   while(optind < argc){
-    char *path = argv[optind++];
+    const string in_path = argv[optind];
+    optind ++;
+    const string out_path = get_output_path(&out_template, &in_path, opt.encoder);
+
+    // creates any directory in path that does not exixt
+    bool file_res = false;
+    file_res |= path_validate(out_path);
+    file_res |= create_parent(out_path);
+    if (file_res){
+      // this should not happen?
+      fprintf(stderr, "Failed to validate the output path %s.\n", out_path.c_str());
+      break;
+    }
+
+    // check if file is to be overwritten, if it already exists
+    bool exists = file_exists(out_path);
+    if(!opt.overwrite && exists){
+      printf("File %s already exists. Overwrite? [y/N] ", out_path.c_str());
+
+      char user_in = getchar();
+      if(user_in != '\n'){
+        char tmp;
+        while((tmp = getchar()) != EOF && tmp != '\n');
+      }
+
+      if(user_in == 'y' || user_in == 'Y'){
+        printf("Overwriting...\n");
+      }
+      else{
+        printf("Skipping...\n");
+        continue;
+      }
+    }
+
     if(!opt.dry_run){
-      bool success = music_convert(path, &opt);
+      bool success;
+      try{
+        Musconv mc(&in_path, &out_path, &opt);
+        printf("Writing to %s\n", out_path.c_str());
+        success = mc.convert();
+      }
+      catch(const exception &e){
+        fprintf(stderr, "Error in Main(): %s\n", e.what());
+      }
+      //bool success = music_convert(path, &opt);
       if(!success){
-        printf("Failed converting %s\n", path);
+        printf("Failed converting %s\n", in_path.c_str());
       }
       else {
         printf("Success\n");
       }
     }
   }
-  exit(EXIT_SUCCESS);
+  return 0;
 }
