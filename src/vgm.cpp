@@ -146,6 +146,11 @@ bool Vgm::is_supported(const string ext){
   return supported;
 }
 
+void Vgm::print_supported(void){
+  printf("Reader \"libvgm\" supports:\n");
+  printf("\tdro gym s98 vgz vgm\n");
+}
+
 static DATA_LOADER* file_req_cb(void *user_param, PlayerBase *player, const char *path){
   (void) user_param;
   (void) player;

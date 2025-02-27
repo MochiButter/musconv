@@ -78,3 +78,15 @@ ssize_t Mpt::get_comments(map<string,string> *comments) const{
 bool Mpt::is_supported(const string ext){
   return openmpt::is_extension_supported2(ext);
 }
+
+void Mpt::print_supported(void){
+  printf("Reader \"libopenmpt\" supports:\n\t");
+  vector<string> exts = openmpt::get_supported_extensions();
+  for(size_t i = 0; i < exts.size(); i ++){
+    printf("%s", exts[i].c_str());
+    if (i != exts.size() - 1) {
+      printf(" ");
+    }
+  }
+  printf("\n");
+}

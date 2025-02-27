@@ -41,7 +41,8 @@ Reader *select_reader(const string *path, const string *ext, musconv_opts *opt){
 }
 
 void supported(void){
-  //Mpt::print_supported();
+  Mpt::print_supported();
+  Vgm::print_supported();
 }
 
 /* Encoder type selector.

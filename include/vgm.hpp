@@ -30,5 +30,6 @@ class Vgm: public Reader{
     virtual ssize_t get_comments(map<string,string> *) const override;
 
     static bool is_supported(const string);
+    static void print_supported(void);
 };
 #endif

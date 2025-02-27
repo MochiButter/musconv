@@ -7,6 +7,7 @@
 #include "fileutil.hpp"
 #include "option.hpp"
 #include "version.h"
+#include "selector.hpp"
 
 using namespace std;
 
