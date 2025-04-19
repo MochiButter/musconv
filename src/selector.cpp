@@ -49,8 +49,10 @@ enum readsel get_reader(const string *ext, musconv_opts *opt) {
   } else if (Vgm::is_supported(*ext)) {
     ret = READER_VGM;
     // vgm only supports 2 channel outputs
-    opt->channels = 2;
-    printf("Warning: libvgm supports 2 channel rendering only!\n");
+    if (opt->channels != 2) {
+      opt->channels = 2;
+      printf("Warning: libvgm supports 2 channel rendering only!\n");
+    }
   }
   return ret;
 }
