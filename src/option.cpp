@@ -9,20 +9,12 @@ void init_opts(musconv_opts *opt){
   // TODO find a good value for any output
   opt->bufsize = 960;
   opt->repeat_count = 0;
-  //opt->interpolation = ;
-  //opt->gain =;
+  opt->decoder = READER_MPT;
   opt->encoder = WRITER_OPUS;
   opt->fade_seconds = 0;
   opt->play_seconds = 0;
-  //opt->channels = 2;
-  opt->filename = NULL;
-  opt->artist = NULL;
-  opt->title = NULL;
-  opt->date = NULL;
   opt->auto_comment = false;
   opt->out_template = NULL;
-  opt->print_sub = false;
-  opt->print_meta = false;
   opt-> dry_run = false;
   opt->quiet = false;
   opt->overwrite = false;

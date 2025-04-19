@@ -15,7 +15,7 @@ class Musconv {
     Writer *w;
     musconv_opts *opt;
     map<string, string> comments;
-    void init_reader(const string *);
+    void init_reader(const string *, enum readsel);
     void init_writer(const string *);
   public:
     Musconv(const string *, const string *, musconv_opts *);

@@ -24,6 +24,5 @@ class Reader{
     virtual size_t read_file(int16_t *, size_t) = 0;
 
     virtual ssize_t get_comments(map<string,string> *) const = 0;
-
 };
 #endif

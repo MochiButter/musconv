@@ -9,6 +9,11 @@ enum writesel{
   WRITER_FLAC
 };
 
+enum readsel{
+  READER_MPT,
+  READER_VGM
+};
+
 typedef struct{
   /* for both reader and writer */
   int32_t samplerate;
@@ -17,8 +22,7 @@ typedef struct{
   /* for the reader */
   size_t bufsize;
   int32_t repeat_count;
-  //int32_t interpolation;
-  //int32_t gain;
+  enum readsel decoder;
 
   /* for the writer */
   enum writesel encoder;
@@ -26,14 +30,8 @@ typedef struct{
   /* for main */
   int32_t fade_seconds;
   int32_t play_seconds;
-  char *filename; 
-  char *artist;
-  char *title;
-  char *date;
   char *out_template;
   bool auto_comment;
-  bool print_sub;
-  bool print_meta;
   bool dry_run;
   bool quiet;
   bool overwrite;

@@ -17,7 +17,7 @@ using namespace std;
 void usage(const char* name){
   printf("Usage:\n");
   printf("  %s <option(s)> <input filename>\n",name);
-  printf("The output file will have the same name as the input file, with .opus file extension.\n");
+  printf("The default output file name will have the same name as the input file, with the encoder's file extension.\n");
   printf("\nOptions:\n");
   printf("  -h, --help         Shows this.\n");
   printf("  -V, --version      Prints the version.\n");
@@ -27,9 +27,7 @@ void usage(const char* name){
   printf("                     Supports the following:\n");
   printf("                       %%(fn) - The source file's filename without the extension.\n");
   printf("                       %%(ext) - The destination file's extension without the dot.\n");
-  printf("                       %%(title) - The source file's title extracted from the reader.\n");
-  printf("                       %%(artist) - The source file's artist extracted from the reader.\n");
-  printf("                       ex. \"%%(artist) - %%(title) [%%(fn)].%%(ext)\"\n");
+  printf("                       ex. \"convert/%%(fn).%%(ext)\"\n");
   printf("  -y                 Automatically overwrites a file when asked.\n");
   printf("  --supported        Prints a list of supported file formats.\n");
   printf("\nRendering options:\n");
@@ -169,12 +167,6 @@ int main(int argc, char **argv){
             return 1;
           }
           opt.play_seconds = time;
-        }
-        else if(strcmp(opname, "print-subsongs") == 0){ // print list of subsongs and numbers
-          opt.print_sub = true;
-        }
-        else if(strcmp(opname, "print-metadata") == 0){ // print song metadata
-          opt.print_meta = true;
         }
         else if(strcmp(opname, "dry-run") == 0){ // skips encoding to file
           opt.dry_run = true;

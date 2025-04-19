@@ -15,18 +15,20 @@ using namespace std;
 
 Musconv::Musconv(const string *source_path, const string *dest_path, musconv_opts *option){
   opt = option;
-  init_reader(source_path);
+  const string fext = get_fext(source_path);
+  enum readsel dec = get_reader(&fext,opt);
+  init_reader(source_path, dec);
   init_writer(dest_path);
 }
 
 Musconv::~Musconv(void){
-  delete(r);
-  delete(w);
+  if (r) delete(r);
+  if (w) delete(w);
 }
 
-void Musconv::init_reader(const string *path){
+void Musconv::init_reader(const string *path, enum readsel dec){
   const string fext = get_fext(path);
-  r = select_reader(path, &fext, opt);
+  r = select_reader(dec, path, opt);
   if (!r){
     fprintf(stderr, "Reader fail\n");
     throw runtime_error("Failed creating reader");

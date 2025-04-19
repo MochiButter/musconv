@@ -1,7 +1,4 @@
 build/
 convert/
+input/
 TODO.md
-musconv
-*.xm
-*.vgm
-*.vgz

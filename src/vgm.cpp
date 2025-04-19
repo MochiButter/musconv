@@ -35,7 +35,6 @@ Vgm::Vgm(const string *path, musconv_opts *opt) : Reader(opt){
   player.SetFileReqCallback(file_req_cb, NULL);
 
   // TODO add bit depth option
-  // TODO limit channels to 2 for libvgm conversions
   uint8_t res;
   res = player.SetOutputSettings(
       Reader::samplerate, Reader::channels, 16, /* bit depth */ Reader::bufsize);

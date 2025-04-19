@@ -11,6 +11,7 @@
 using namespace std;
 
 void supported(void);
-Reader *select_reader(const string *, const string *, musconv_opts *);
+Reader *select_reader(enum readsel, const string *, musconv_opts *);
 Writer *select_writer(const string *, const map<string, string> &, musconv_opts *);
+enum readsel get_reader(const string *, musconv_opts *);
 #endif
