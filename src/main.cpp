@@ -38,6 +38,7 @@ void usage(const char* name){
   printf("  --dry-run          Run the program, skipping writing to file.\n");
   printf("  --time n           Specifies the time in seconds the song should play for. INCLUDES the fadeout time.\n");
   printf("  --fadeout n        After the song finishes playing, play for another n seconds and fade out.\n");
+  printf("  --opl4-rom path    Makes the YMF278B emulator look for the rom at the location specified by the path.\n");
   printf("\nComment options:\n");
   printf("  --auto-comment     Automatically fills the tags of the output file from the source file.\n");
 }
@@ -76,6 +77,7 @@ int main(int argc, char **argv){
     {"print-subsongs", no_argument, 0, 0},
     {"print-metadata", no_argument, 0, 0},
     {"dry-run", no_argument, 0, 0},
+    {"opl4-rom", required_argument, 0, 0},
     {0, 0, 0, 0}
   };
 
@@ -175,6 +177,9 @@ int main(int argc, char **argv){
         else if(strcmp(opname, "supported") == 0){ // print list of supported files
           supported();
           return 1;
+        }
+        else if(strcmp(opname, "opl4-rom") == 0){ // allow user to specify opl4 path
+          opt.opl4_rom_path = optarg;
         }
         break;
       case 'y':

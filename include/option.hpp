@@ -23,6 +23,7 @@ typedef struct{
   size_t bufsize;
   int32_t repeat_count;
   enum readsel decoder;
+  char *opl4_rom_path;
 
   /* for the writer */
   enum writesel encoder;

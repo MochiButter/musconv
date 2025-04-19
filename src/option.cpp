@@ -18,6 +18,7 @@ void init_opts(musconv_opts *opt){
   opt-> dry_run = false;
   opt->quiet = false;
   opt->overwrite = false;
+  opt->opl4_rom_path = NULL;
 }
 
 void print_opts(musconv_opts *opt){

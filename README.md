@@ -41,6 +41,7 @@ Rendering options:
   --dry-run          Run the program, skipping writing to file.
   --time n           Specifies the time in seconds the song should play for. INCLUDES the fadeout time.
   --fadeout n        After the song finishes playing, play for another n seconds and fade out.
+  --opl4-rom path    Makes the YMF278B emulator look for the rom at the location specified by the path.
 
 Comment options:
   --auto-comment     Automatically fills the tags of the output file from the source file.

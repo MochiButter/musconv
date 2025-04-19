@@ -32,7 +32,7 @@ Vgm::Vgm(const string *path, musconv_opts *opt) : Reader(opt){
   player.RegisterPlayerEngine(new S98Player);
   player.RegisterPlayerEngine(new DROPlayer);
   player.RegisterPlayerEngine(new GYMPlayer);
-  player.SetFileReqCallback(file_req_cb, NULL);
+  player.SetFileReqCallback(file_req_cb, opt->opl4_rom_path);
 
   // TODO add bit depth option
   uint8_t res;
@@ -150,11 +150,14 @@ void Vgm::print_supported(void){
   printf("\tdro gym s98 vgz vgm\n");
 }
 
+// TODO add file loading from different paths
 static DATA_LOADER* file_req_cb(void *user_param, PlayerBase *player, const char *path){
-  (void) user_param;
   (void) player;
 
-  DATA_LOADER* rom_loader = FileLoader_Init(path);
+  const char *rom_path =
+    user_param ? (const char * )user_param : path;
+  DATA_LOADER* rom_loader = FileLoader_Init(rom_path);
+
   uint8_t res = DataLoader_Load(rom_loader);
   if (res){
     DataLoader_Deinit(rom_loader);
