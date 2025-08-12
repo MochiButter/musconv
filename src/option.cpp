@@ -19,6 +19,7 @@ void init_opts(musconv_opts *opt){
   opt->quiet = false;
   opt->overwrite = false;
   opt->opl4_rom_path = NULL;
+  opt->use_m3u = false;
 }
 
 void print_opts(musconv_opts *opt){

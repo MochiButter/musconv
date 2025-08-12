@@ -7,6 +7,7 @@
 #include "writer.hpp"
 #include "mpt.hpp"
 #include "vgm.hpp"
+#include "gme.hpp"
 #include "ope.hpp"
 #include "flacenc.hpp"
 #include "option.hpp"
@@ -35,6 +36,14 @@ Reader *select_reader(enum readsel dec, const string *path, musconv_opts *opt){
         ret = NULL;
       }
       break;
+    case READER_GME:
+      try{
+        ret = new Gme(path, opt);
+      }
+      catch(exception &e){
+        ret = NULL;
+      }
+      break;
     default:
       ret = NULL;
       break;
@@ -53,6 +62,8 @@ enum readsel get_reader(const string *ext, musconv_opts *opt) {
       opt->channels = 2;
       printf("Warning: libvgm supports 2 channel rendering only!\n");
     }
+  } else if (Gme::is_supported(*ext)) {
+    ret = READER_GME;
   }
   return ret;
 }
@@ -60,6 +71,7 @@ enum readsel get_reader(const string *ext, musconv_opts *opt) {
 void supported(void){
   Mpt::print_supported();
   Vgm::print_supported();
+  Gme::print_supported();
 }
 
 /* Encoder type selector.

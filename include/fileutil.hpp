@@ -8,6 +8,7 @@
 
 using namespace std;
 
+void find_and_replace(string *, const string, const string);
 string get_fext(const string *);
 string get_output_path(const string *, const string *, enum writesel);
 

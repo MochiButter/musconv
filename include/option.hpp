@@ -11,7 +11,8 @@ enum writesel{
 
 enum readsel{
   READER_MPT,
-  READER_VGM
+  READER_VGM,
+  READER_GME
 };
 
 typedef struct{
@@ -24,6 +25,7 @@ typedef struct{
   int32_t repeat_count;
   enum readsel decoder;
   char *opl4_rom_path;
+  bool use_m3u;
 
   /* for the writer */
   enum writesel encoder;

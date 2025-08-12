@@ -17,7 +17,7 @@
 
 using namespace std;
 
-static void find_and_replace(string *base, const string find, const string replace){
+void find_and_replace(string *base, const string find, const string replace){
   size_t ind = 0;
   while((ind = base->find(find, ind)) != string::npos){
     base->replace(ind, find.size(), replace);

@@ -10,7 +10,7 @@ add_subdirectory("third_party/libvgm")
 link_directories("${CMAKE_BINARY_DIR}/third_party/libvgm/bin")
 
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(musconv REQUIRED flac libopenmpt libopusenc)
+pkg_check_modules(musconv REQUIRED flac libopenmpt libopusenc libgme)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -23,6 +23,7 @@ include_directories("include")
 add_executable(musconv 
   "src/fileutil.cpp"
   "src/flacenc.cpp"
+  "src/gme.cpp"
   "src/main.cpp"
   "src/mpt.cpp"
   "src/musconv.cpp"

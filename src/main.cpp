@@ -39,6 +39,8 @@ void usage(const char* name){
   printf("  --time n           Specifies the time in seconds the song should play for. INCLUDES the fadeout time.\n");
   printf("  --fadeout n        After the song finishes playing, play for another n seconds and fade out.\n");
   printf("  --opl4-rom path    Makes the YMF278B emulator look for the rom at the location specified by the path.\n");
+  printf("  --use-m3u          Uses an m3u file with the same stem as the input file for getting the track information.\n");
+  printf("                     Ex. Game (1993)(Company).nsf, Game (1993)(Company).m3u");
   printf("\nComment options:\n");
   printf("  --auto-comment     Automatically fills the tags of the output file from the source file.\n");
 }
@@ -78,6 +80,7 @@ int main(int argc, char **argv){
     {"print-metadata", no_argument, 0, 0},
     {"dry-run", no_argument, 0, 0},
     {"opl4-rom", required_argument, 0, 0},
+    {"use-m3u", no_argument, 0, 0},
     {0, 0, 0, 0}
   };
 
@@ -181,6 +184,9 @@ int main(int argc, char **argv){
         else if(strcmp(opname, "opl4-rom") == 0){ // allow user to specify opl4 path
           opt.opl4_rom_path = optarg;
         }
+        else if(strcmp(opname, "use-m3u") == 0){ // allow user to supply m3u playlist info
+          opt.use_m3u = true;
+        }
         break;
       case 'y':
         opt.overwrite = true;
@@ -258,7 +264,7 @@ int main(int argc, char **argv){
     }
 
     if(!opt.dry_run){
-      bool success;
+      bool success = false;
       try{
         Musconv mc(&in_path, &out_path, &opt);
         printf("Writing to %s\n", out_path.c_str());
